@@ -8,17 +8,21 @@ using Timer = Jypeli.Timer;
 namespace Zombit;
 
 /// @author Heikki Vuorio, Disa Vuorio
+/// Heikin taulukko for-silmukalla: https://tim.jyu.fi/answers/kurssit/tie/ohj1/avoin23/demot/demo5?answerNumber=2&amp;task=taulukot5&amp;user=hejumivu
+/// Disan taulukko for-silmukalla: https://tim.jyu.fi/answers/kurssit/tie/ohj1/avoin23/demot/demo11?answerNumber=14&amp;task=taulukot2&amp;user=dikavuor
 /// @version 29.12.2023
 /// <summary>
 /// Peli, jossa on maailmanloppu ja selviytyjän tehtävänä on selviytyä laiturille, jotta voi purjehtia turvaan.
 /// </summary>
-
 public class Zombit : PhysicsGame
 {
     private const int RuudunKoko = 200;
-    private Image[] _kuvat = LoadImages("Peruszombi", "Naiszombi", "Isozombi", "Mummozombi", "zombipupu", "hyttyszombi");
+
+    private Image[] _kuvat =
+        LoadImages("Peruszombi", "Naiszombi", "Isozombi", "Mummozombi", "zombipupu", "hyttyszombi");
+
     private PhysicsObject _pelaaja1;
-    private Image[] _survivorKavely = LoadImages ("survivorJuoksee", "survivorseisoo");
+    private Image[] _survivorKavely = LoadImages("survivorJuoksee", "survivorseisoo");
     private Image _pelaajanKuva = LoadImage("survivor.png");
     private Image _pelaajanKuolemaKuva = LoadImage("survivorkuoli");
     private IntMeter _pelaajan1Pisteet;
@@ -38,14 +42,14 @@ public class Zombit : PhysicsGame
     private Image _musta = LoadImage("kappana");
     private Image _maali = LoadImage("lankku");
     private Image _pommit = LoadImage("pommi");
-    
-    
+
+
     public override void Begin()
     {
         LuoAlkuvalikko();
     }
-    
-    
+
+
     /// <summary>
     /// Luodaan peliin kenttä.
     /// </summary>
@@ -67,7 +71,7 @@ public class Zombit : PhysicsGame
         kentta.SetTileMethod('J', LisaaPommi);
         kentta.SetTileMethod('D', LisaaSavu);
         kentta.SetTileMethod('W', LisaaMaali);
-        kentta.Execute(RuudunKoko,RuudunKoko);
+        kentta.Execute(RuudunKoko, RuudunKoko);
         Level.CreateBorders();
         Camera.Follow(_pelaaja1);
         Camera.ZoomFactor = 1.2;
@@ -76,12 +80,13 @@ public class Zombit : PhysicsGame
         Level.Background.Image = _taustakuva;
         Level.Background.FitToLevel();
         MessageWindow ikkuna =
-            new MessageWindow(" Hei Selviytyjä! Maapallon ovat vallanneet Zombit. Vene odottaa sinua satamassa, sen avulla pääset turvaan. Onnea matkaan! -Ystäväsi Ryan" );
+            new MessageWindow(
+                " Hei Selviytyjä! Maapallon ovat vallanneet Zombit. Vene odottaa sinua satamassa, sen avulla pääset turvaan. Onnea matkaan! -Ystäväsi Ryan");
         ikkuna.Color = Color.White;
         Add(ikkuna);
     }
-    
-    
+
+
     /// <summary>
     /// Luodaan peliin aloita peli aliohjelma, joka nollaa kentän ja luo sinne uudelleen kentän ominaisuudet.
     /// </summary>
@@ -97,15 +102,16 @@ public class Zombit : PhysicsGame
         LisaaZombit();
         Timer.CreateAndStart(10.0, LisaaZombit);
     }
-    
-    
+
+
     /// <summary>
     /// Luodaan peliin alkuvalikko, josta on mahdollisuus valita: aloita peli, parhaat pisteet ja lopeta peli.
     /// </summary>
     void LuoAlkuvalikko()
     {
         ClearAll();
-        MultiSelectWindow alkuvalikko = new MultiSelectWindow("Pelin alkuvalikko", "Aloita peli", "Parhaat pisteet", "Lopeta");
+        MultiSelectWindow alkuvalikko =
+            new MultiSelectWindow("Pelin alkuvalikko", "Aloita peli", "Parhaat pisteet", "Lopeta");
         Add(alkuvalikko);
         alkuvalikko.AddItemHandler(0, AloitaPeli);
         alkuvalikko.AddItemHandler(1, NaytaParhaatPisteet);
@@ -116,6 +122,7 @@ public class Zombit : PhysicsGame
         alkuvalikko.SetButtonTextColor(Color.Black);
     }
 
+
     /// <summary>
     /// Luodaan aliohjelma Pausella, joka pysäyttää pelin väliaikaisesti.
     /// </summary>
@@ -123,18 +130,18 @@ public class Zombit : PhysicsGame
     {
         IsPaused = !IsPaused;
     }
-    
-    
+
+
     /// <summary>
     /// Luodaan parhaat pisteet alkuvalikkoon.
     /// </summary>
     void NaytaParhaatPisteet()
     {
         _parhaatPisteet.Show();
-        _parhaatPisteet.HighScoreWindow.Closed += delegate { LuoAlkuvalikko();};
+        _parhaatPisteet.HighScoreWindow.Closed += delegate { LuoAlkuvalikko(); };
     }
-    
-    
+
+
     /// <summary>
     /// Luodaan peliin ohjaimet, joilla ohjataan selviytyjää sekä voidaan ampua aseella ja heittää kranaatteja.
     /// </summary>
@@ -157,14 +164,14 @@ public class Zombit : PhysicsGame
         Keyboard.Listen(Key.U, ButtonState.Pressed, AloitaUudelleen, "aloita peli alusta");
         Keyboard.Listen(Key.P, ButtonState.Pressed, Pausella, "peli pauselle");
     }
-    
-    
+
+
     /// <summary>
     /// Luodaan peliin pelaaja.
     /// </summary>
-    /// <param name="paikka"></param>
-    /// <param name="leveys"></param>
-    /// <param name="korkeus"></param>
+    /// <param name="paikka">paikka</param>
+    /// <param name="leveys">leveys</param>
+    /// <param name="korkeus">korkeus</param>
     private void LisaaPelaaja1(Vector paikka, double leveys, double korkeus)
     {
         _pelaaja1 = new PhysicsObject(60, 60)
@@ -182,16 +189,16 @@ public class Zombit : PhysicsGame
             IgnoresExplosions = true
         };
         Add(_pelaaja1);
-        
+
         _pelaaja1.Animation.Start();
-        
+
         AddCollisionHandler(_pelaaja1, "vihu", TormaaViholliseen);
-        AddCollisionHandler(_pelaaja1,"hela", PelaajaParantuu);
+        AddCollisionHandler(_pelaaja1, "hela", PelaajaParantuu);
         AddCollisionHandler(_pelaaja1, "maali", TormaaMaaliin);
-        AddCollisionHandler(_pelaaja1,"pommi", TormaaPommiin);
+        AddCollisionHandler(_pelaaja1, "pommi", TormaaPommiin);
     }
-    
-    
+
+
     /// <summary>
     /// Luodaan nappula, josta voi aloittaa pelin uudelleen.
     /// </summary>
@@ -206,11 +213,14 @@ public class Zombit : PhysicsGame
         LisaaOhjaimet();
         LisaaZombit();
     }
-   
+
 
     /// <summary>
-    /// Luodaan peliin zombi nimeltä pahis1 ja luodaan sille seuraajaaivot
+    /// Luodaan peliin zombeja ja niiden ominaisuudet.
     /// </summary>
+    /// <param name="kuvia">kuvat</param>
+    /// <param name="x">x</param>
+    /// <param name="y">y</param>
     void LisaaPahis(Image kuvia, int x, int y)
     {
         PhysicsObject pahis1 = new PhysicsObject(60, 60);
@@ -223,11 +233,11 @@ public class Zombit : PhysicsGame
         pahis1.Y = pahis1.Y + y;
         pahis1.Move(new Vector());
         Add(pahis1);
-        
+
         RandomMoverBrain satunnaisaivot = new RandomMoverBrain(100);
         satunnaisaivot.ChangeMovementSeconds = 3;
         pahis1.Brain = satunnaisaivot;
-        
+
         FollowerBrain seuraajanAivot = new FollowerBrain(_pelaaja1);
         seuraajanAivot.Speed = 300;
         seuraajanAivot.DistanceFar = 600;
@@ -245,47 +255,47 @@ public class Zombit : PhysicsGame
         }
     }
 
-    
+
     /// <summary>
     /// Kun pelaaja pääsee maaliin, tulee teksti ruutuun, että pääsit läpi.
     /// </summary>
-    /// <param name="pelaaja1"></param>
-    /// <param name="kohde"></param>
+    /// <param name="pelaaja1">pelaaja1</param>
+    /// <param name="kohde">kohde</param>
     void TormaaMaaliin(PhysicsObject pelaaja1, PhysicsObject kohde)
     {
         if (kohde.Tag.ToString() == "maali")
         {
             Label tekstikentt = new Label(350, 150, "PÄÄSIT KENTÄN LÄPI! WUHUU!");
             tekstikentt.X = tekstikentt.X + 0;
-            tekstikentt.Y = tekstikentt.Y +200;
+            tekstikentt.Y = tekstikentt.Y + 200;
             tekstikentt.Color = Color.LimeGreen;
             tekstikentt.TextColor = Color.Black;
             tekstikentt.BorderColor = Color.White;
             MediaPlayer.Play("fanfaari");
             Add(tekstikentt);
-            
+
             _parhaatPisteet.EnterAndShow(_pelaajan1Pisteet.Value);
-            _parhaatPisteet.HighScoreWindow.Closed += delegate { AloitaPeli();};
+            _parhaatPisteet.HighScoreWindow.Closed += delegate { AloitaPeli(); };
         }
     }
 
-    
+
     /// <summary>
     /// Luodaan kenttään maaliviiva.
     /// </summary>
-    /// <param name="paikka"></param>
-    /// <param name="leveys"></param>
-    /// <param name="korkeus"></param>
+    /// <param name="paikka">paikka</param>
+    /// <param name="leveys">leveys</param>
+    /// <param name="korkeus">korkeus</param>
     void LisaaMaali(Vector paikka, double leveys, double korkeus)
     {
-        PhysicsObject lankku = PhysicsObject.CreateStaticObject(250,200);
+        PhysicsObject lankku = PhysicsObject.CreateStaticObject(250, 200);
         lankku.Position = paikka;
         lankku.Tag = "maali";
         lankku.Image = _maali;
         Add(lankku);
     }
-    
-    
+
+
     /// <summary>
     /// Luodaan peliin pelaajalle ase. 
     /// </summary>
@@ -300,11 +310,11 @@ public class Zombit : PhysicsGame
         _pelaaja1.Add(_pelaajan1Ase);
     }
 
-    
+
     /// <summary>
     /// Aliohjelmassa määritetään ammuksen ominaisuuksia.
     /// </summary>
-    /// <param name="ase"></param>
+    /// <param name="ase">ase</param>
     void AmmuAseella(AssaultRifle ase)
     {
         PhysicsObject ammus = ase.Shoot();
@@ -312,16 +322,16 @@ public class Zombit : PhysicsGame
         if (ammus != null)
         {
             ammus.Size *= 1;
-            ammus.MaximumLifetime =TimeSpan.FromSeconds(2.0);
+            ammus.MaximumLifetime = TimeSpan.FromSeconds(2.0);
         }
     }
-    
-  
+
+
     /// <summary>
     /// kun ammus osuu zombiin, pelaaja saa pisteen ja ammus tuhoutuu.
     /// </summary>
-    /// <param name="ammus"></param>
-    /// <param name="kohde"></param>
+    /// <param name="ammus">ammus</param>
+    /// <param name="kohde">kohde</param>
     void AmmusOsui(IPhysicsObject ammus, IPhysicsObject kohde)
     {
         ammus.Destroy();
@@ -332,187 +342,187 @@ public class Zombit : PhysicsGame
             _pelaajan1Pisteet.Value += 1;
         }
     }
-    
-    
+
+
     /// <summary>
     /// Luodaan kranaatti, jota pelaaja voi heittää zombeja kohti.
     /// </summary>
-    /// <param name="pelaaja1"></param>
+    /// <param name="pelaaja1">pelaaja1</param>
     void HeitaKranaatti(PhysicsObject pelaaja1)
     {
         Grenade kranu = new Grenade(10.0);
         kranu.Explosion.AddShockwaveHandler("vihu", KranaattiOsui);
         pelaaja1.Throw(kranu, Angle.FromDegrees(20), 3000);
     }
-    
-    
-  /// <summary>
-  /// Kun kranaatti osuu zombiin, pelaaja saa pisteen ja zombi tuhoutuu.
-  /// </summary>
-  /// <param name="kohde"></param>
-  /// <param name="v"></param>
+
+
+    /// <summary>
+    /// Kun kranaatti osuu zombiin, pelaaja saa pisteen ja zombi tuhoutuu.
+    /// </summary>
+    /// <param name="kohde">kohde</param>
+    /// <param name="v">v</param>
     void KranaattiOsui(IPhysicsObject kohde, Vector v)
     {
         kohde.Destroy();
-        
+
         if (kohde.Tag.ToString() == "vihu")
         {
             _pelaajan1Pisteet.Value += 1;
         }
     }
 
-  
-  /// <summary>
-  /// Pelaaja liikkuu animaatiolla.
-  /// </summary>
-  /// <param name="vektori"></param>
-  void LiikutaPelaajaa(Vector vektori)
-  {
-      _pelaaja1.Move(vektori);
-  }
+
+    /// <summary>
+    /// Pelaaja liikkuu animaatiolla.
+    /// </summary>
+    /// <param name="vektori">vektori</param>
+    void LiikutaPelaajaa(Vector vektori)
+    {
+        _pelaaja1.Move(vektori);
+    }
 
 
-/// <summary>
-/// Lisätään kentään reuna.
-/// </summary>
-/// <param name="paikka"></param>
-/// <param name="leveys"></param>
-/// <param name="korkeus"></param>
+    /// <summary>
+    /// Lisätään kentään reuna.
+    /// </summary>
+    /// <param name="paikka">paikka</param>
+    /// <param name="leveys">leveys</param>
+    /// <param name="korkeus">korkeus</param>
     private void LisaaReuna(Vector paikka, double leveys, double korkeus)
     {
-        PhysicsObject reuna = PhysicsObject.CreateStaticObject(100,100);
+        PhysicsObject reuna = PhysicsObject.CreateStaticObject(100, 100);
         reuna.Position = paikka;
         reuna.Color = Color.Gray;
         Add(reuna);
     }
-  
-  
-/// <summary>
-/// Lisätään kenttään taloja.
-/// </summary>
-/// <param name="paikka"></param>
-/// <param name="leveys"></param>
-/// <param name="korkeus"></param>
+
+
+    /// <summary>
+    /// Lisätään kenttään taloja.
+    /// </summary>
+    /// <param name="paikka">paikka</param>
+    /// <param name="leveys">leveys</param>
+    /// <param name="korkeus">korkeus</param>
     void LisaaBeissi(Vector paikka, double leveys, double korkeus)
     {
-        PhysicsObject talo = PhysicsObject.CreateStaticObject(200,200);
+        PhysicsObject talo = PhysicsObject.CreateStaticObject(200, 200);
         talo.Position = paikka;
         talo.Image = _beissi;
         Add(talo);
     }
-    
-    
-/// <summary>
-/// Lisätään kenttään laavaa, esteeksi.
-/// </summary>
-/// <param name="paikka"></param>
-/// <param name="leveys"></param>
-/// <param name="korkeus"></param>
+
+
+    /// <summary>
+    /// Lisätään kenttään laavaa, esteeksi.
+    /// </summary>
+    /// <param name="paikka">paikka</param>
+    /// <param name="leveys">leveys</param>
+    /// <param name="korkeus">korkeus</param>
     void LisaaLaava(Vector paikka, double leveys, double korkeus)
     {
-        PhysicsObject laacaa = PhysicsObject.CreateStaticObject(90,90);
+        PhysicsObject laacaa = PhysicsObject.CreateStaticObject(90, 90);
         laacaa.Position = paikka;
         laacaa.Image = _laava;
         Add(laacaa);
     }
-    
-    
-/// <summary>
-/// Lisötään kenttään kuihtunut puu.
-/// </summary>
-/// <param name="paikka"></param>
-/// <param name="leveys"></param>
-/// <param name="korkeus"></param>
+
+
+    /// <summary>
+    /// Lisötään kenttään kuihtunut puu.
+    /// </summary>
+    /// <param name="paikka">paikka</param>
+    /// <param name="leveys">leveys</param>
+    /// <param name="korkeus">korkeus</param>
     void LisaaKappana(Vector paikka, double leveys, double korkeus)
     {
-        PhysicsObject kappana = PhysicsObject.CreateStaticObject(90,90);
+        PhysicsObject kappana = PhysicsObject.CreateStaticObject(90, 90);
         kappana.Position = paikka;
         kappana.Image = _musta;
         Add(kappana);
     }
-    
-    
-/// <summary>
-/// Lisätään kenttään tulivuoria.
-/// </summary>
-/// <param name="paikka"></param>
-/// <param name="leveys"></param>
-/// <param name="korkeus"></param>
+
+
+    /// <summary>
+    /// Lisätään kenttään tulivuoria.
+    /// </summary>
+    /// <param name="paikka">paikka</param>
+    /// <param name="leveys">leveys</param>
+    /// <param name="korkeus">korkeus</param>
     void LisaaTuli(Vector paikka, double leveys, double korkeus)
     {
-        PhysicsObject tulivuori = PhysicsObject.CreateStaticObject(90,90);
+        PhysicsObject tulivuori = PhysicsObject.CreateStaticObject(90, 90);
         tulivuori.Position = paikka;
         tulivuori.Image = _tuli;
         Add(tulivuori);
     }
-    
-    
+
+
     /// <summary>
     /// Luodaan savuefekti tulivuorille. 
     /// </summary>
-    /// <param name="paikka"></param>
-    /// <param name="leveys"></param>
-    /// <param name="korkeus"></param>
+    /// <param name="paikka">paikka</param>
+    /// <param name="leveys">leveys</param>
+    /// <param name="korkeus">korkeus</param>
     void LisaaSavu(Vector paikka, double leveys, double korkeus)
     {
         Smoke savu = new Smoke();
         savu.Position = paikka;
         Add(savu);
     }
-    
-    
-/// <summary>
-/// Lisätään peliin heladrinksu, josta parantuu.
-/// </summary>
-/// <param name="paikka"></param>
-/// <param name="leveys"></param>
-/// <param name="korkeus"></param>
+
+
+    /// <summary>
+    /// Lisätään peliin heladrinksu, josta parantuu.
+    /// </summary>
+    /// <param name="paikka">paikka</param>
+    /// <param name="leveys">leveys</param>
+    /// <param name="korkeus">korkeus</param>
     void LisaaHela(Vector paikka, double leveys, double korkeus)
     {
-        PhysicsObject heladrinksu = PhysicsObject.CreateStaticObject(60,60);
+        PhysicsObject heladrinksu = PhysicsObject.CreateStaticObject(60, 60);
         heladrinksu.Position = paikka;
         heladrinksu.Tag = "hela";
         heladrinksu.Image = _hela;
         Add(heladrinksu);
     }
-    
-    
+
+
     /// <summary>
     /// Lisätään kenttään autoja.
     /// </summary>
-    /// <param name="paikka"></param>
-    /// <param name="leveys"></param>
-    /// <param name="korkeus"></param>
+    /// <param name="paikka">paikka</param>
+    /// <param name="leveys">leveys</param>
+    /// <param name="korkeus">korkeus</param>
     public void LisaaAuto(Vector paikka, double leveys, double korkeus)
     {
         PhysicsObject auto = PhysicsObject.CreateStaticObject(90, 90);
         auto.Position = paikka;
         auto.Image = _pauto;
         Add(auto);
-    }    
-    
-    
-/// <summary>
-/// Lisätään kenttään kuorma-autoja.
-/// </summary>
-/// <param name="paikka"></param>
-/// <param name="leveys"></param>
-/// <param name="korkeus"></param>
+    }
+
+
+    /// <summary>
+    /// Lisätään kenttään kuorma-autoja.
+    /// </summary>
+    /// <param name="paikka">paikka</param>
+    /// <param name="leveys">leveys</param>
+    /// <param name="korkeus">korkeus</param>
     public void LisaaKauto(Vector paikka, double leveys, double korkeus)
     {
-        PhysicsObject kauto = PhysicsObject.CreateStaticObject(200,200);
+        PhysicsObject kauto = PhysicsObject.CreateStaticObject(200, 200);
         kauto.Position = paikka;
         kauto.Image = _kAuto;
         Add(kauto);
     }
-    
-    
-/// <summary>
-/// Lisätään kenttään tankkeja.
-/// </summary>
-/// <param name="paikka"></param>
-/// <param name="leveys"></param>
-/// <param name="korkeus"></param>
+
+
+    /// <summary>
+    /// Lisätään kenttään tankkeja.
+    /// </summary>
+    /// <param name="paikka">paikka</param>
+    /// <param name="leveys">leveys</param>
+    /// <param name="korkeus">korkeus</param>
     public void LisaaTankki(Vector paikka, double leveys, double korkeus)
     {
         PhysicsObject tank = PhysicsObject.CreateStaticObject(leveys, korkeus);
@@ -520,29 +530,29 @@ public class Zombit : PhysicsGame
         tank.Image = _tankki;
         Add(tank);
     }
-    
-    
-/// <summary>
-/// Lisätään kenttään betonipossuja.
-/// </summary>
-/// <param name="paikka"></param>
-/// <param name="leveys"></param>
-/// <param name="korkeus"></param>
+
+
+    /// <summary>
+    /// Lisätään kenttään betonipossuja.
+    /// </summary>
+    /// <param name="paikka">paikka</param>
+    /// <param name="leveys">leveys</param>
+    /// <param name="korkeus">korkeus</param>
     public void LisaaBpossu(Vector paikka, double leveys, double korkeus)
     {
-        PhysicsObject bpossut = PhysicsObject.CreateStaticObject(100,100);
+        PhysicsObject bpossut = PhysicsObject.CreateStaticObject(100, 100);
         bpossut.Position = paikka;
         bpossut.Image = _bpossu;
         Add(bpossut);
     }
-    
-    
-/// <summary>
-/// Lisätään puita
-/// </summary>
-/// <param name="paikka"></param>
-/// <param name="leveys"></param>
-/// <param name="korkeus"></param>
+
+
+    /// <summary>
+    /// Lisätään puita
+    /// </summary>
+    /// <param name="paikka">paikka</param>
+    /// <param name="leveys">leveys</param>
+    /// <param name="korkeus">korkeus</param>
     public void LisaaPuu(Vector paikka, double leveys, double korkeus)
     {
         PhysicsObject puu = PhysicsObject.CreateStaticObject(leveys, korkeus);
@@ -550,17 +560,14 @@ public class Zombit : PhysicsGame
         puu.Image = _puita;
         Add(puu);
     }
-    
-    
 
 
-    
-   /// <summary>
-   /// Luodaan peliin pommi, joka räjähtää, jos zombi tai pelaaja osuu siihen.
-   /// </summary>
-   /// <param name="paikka"></param>
-   /// <param name="leveys"></param>
-   /// <param name="korkeus"></param>
+    /// <summary>
+    /// Luodaan peliin pommi, joka räjähtää, jos zombi tai pelaaja osuu siihen.
+    /// </summary>
+    /// <param name="paikka">paikka</param>
+    /// <param name="leveys">leveys</param>
+    /// <param name="korkeus">korkeus</param>
     void LisaaPommi(Vector paikka, double leveys, double korkeus)
     {
         PhysicsObject pommi = PhysicsObject.CreateStaticObject(leveys, korkeus);
@@ -569,8 +576,8 @@ public class Zombit : PhysicsGame
         pommi.Image = _pommit;
         Add(pommi);
     }
-    
-   
+
+
     /// <summary>
     /// Luodaan peliin laskuri, joka laskee pelaajan pisteet.
     /// </summary>
@@ -578,32 +585,32 @@ public class Zombit : PhysicsGame
     {
         _pelaajan1Pisteet = LuoPisteLaskuri(Screen.Left + 100.0, Screen.Top - 50.0);
     }
-   
-    
+
+
     /// <summary>
     /// Luodaan peliin pistelaskuri, joka näyttää pelaajan pisteet ruudulla. 
     /// </summary>
-    /// <param name="x"></param>
-    /// <param name="y"></param>
+    /// <param name="x">x</param>
+    /// <param name="y">y</param>
     /// <returns></returns>
     IntMeter LuoPisteLaskuri(double x, double y)
     {
         IntMeter laskuri = new IntMeter(0);
         laskuri.MaxValue = 100;
-        Label naytto = new Label(300,50);
+        Label naytto = new Label(300, 50);
         naytto.BindTo(laskuri);
-        naytto.X = x +10;
-        naytto.Y = y +10;
+        naytto.X = x + 10;
+        naytto.Y = y + 10;
         naytto.TextColor = Color.Black;
         naytto.BorderColor = Color.Black;
         naytto.Color = Color.LimeGreen;
         naytto.Title = " Zombeja eliminoitu: ";
         Add(naytto);
-        
+
         return laskuri;
     }
-    
-    
+
+
     /// <summary>
     /// Luodaan peliin elämälaskuri, joka näyttää paljonko pelaajalla on helaa.
     /// </summary>
@@ -614,7 +621,7 @@ public class Zombit : PhysicsGame
         _elamanlaskuri.LowerLimit += ElamaLoppui;
         _elamanlaskuri.AddOverTime(1, 20);
         _elamanlaskuri.LowerLimit += PelaajaKuoli;
-        
+
         ProgressBar elamapalkki = new ProgressBar(150, 20);
         elamapalkki.X = Screen.Right - 150;
         elamapalkki.Y = Screen.Top - 30;
@@ -624,17 +631,18 @@ public class Zombit : PhysicsGame
         elamapalkki.BarColor = Color.Red;
         elamapalkki.BorderColor = Color.Black;
     }
-    
-    
+
+
     /// <summary>
     /// Kun pelaaja kuolee, palataan alkuvalikkoon.
     /// </summary>
     void PelaajaKuoli()
     {
         ElamaLoppui();
-        MultiSelectWindow alkuvalikko = new MultiSelectWindow("Pelin alkuvalikko", "Aloita peli", "Parhaat pisteet", "Lopeta");
+        MultiSelectWindow alkuvalikko =
+            new MultiSelectWindow("Pelin alkuvalikko", "Aloita peli", "Parhaat pisteet", "Lopeta");
         Add(alkuvalikko);
-        
+
         alkuvalikko.AddItemHandler(0, AloitaPeli);
         alkuvalikko.AddItemHandler(1, NaytaParhaatPisteet);
         alkuvalikko.AddItemHandler(2, Exit);
@@ -643,13 +651,13 @@ public class Zombit : PhysicsGame
         alkuvalikko.SetButtonColor(Color.White);
         alkuvalikko.SetButtonTextColor(Color.Black);
     }
-    
+
 
     /// <summary>
     /// pelaaja saa helaa kun se osuu heladrinksuun.
     /// </summary>
-    /// <param name="pelaaja1"></param>
-    /// <param name="kohde"></param>
+    /// <param name="pelaaja1">pelaaja</param>
+    /// <param name="kohde">kohde</param>
     void PelaajaParantuu(PhysicsObject pelaaja1, PhysicsObject kohde)
     {
         kohde.Destroy();
@@ -664,51 +672,51 @@ public class Zombit : PhysicsGame
     /// <summary>
     /// kun pelaaja törmää zombiin, pelaaja menettää yhden elämän.
     /// </summary>
-    /// <param name="tormaaja"></param>
-    /// <param name="kohde"></param>
+    /// <param name="tormaaja">tormaaja</param>
+    /// <param name="kohde">kohde</param>
     void TormaaViholliseen(PhysicsObject tormaaja, PhysicsObject kohde)
     {
         _elamanlaskuri.Value -= 1;
     }
 
-    
+
     /// <summary>
     /// Pelaaja kuolee kun se osuu pommiin.
     /// </summary>
-    /// <param name="tormaaja"></param>
-    /// <param name="kohde"></param>
+    /// <param name="tormaaja">tormaaja</param>
+    /// <param name="kohde">kohde</param>
     void TormaaPommiin(PhysicsObject tormaaja, PhysicsObject kohde)
     {
         kohde.Destroy();
-        
+
         _elamanlaskuri.Value -= 10;
-        
+
         Explosion rajahdys = new Explosion(50);
         rajahdys.Position = kohde.Position;
         Add(rajahdys);
     }
-    
-    
+
+
     /// <summary>
     /// Kun elämät loppuu pelaaja kuolee ja ei voi liikkua tai ampua enää.
     /// </summary>
     void ElamaLoppui()
     {
-            Label tekstikentta = new Label(200, 100, " GAME OVER! ");
-            tekstikentta.X = tekstikentta.X + 0;
-            tekstikentta.Y = tekstikentta.Y + 300;
-            tekstikentta.Color = Color.Black;
-            tekstikentta.TextColor = Color.Red;
-            tekstikentta.BorderColor = Color.Black;
-            Add(tekstikentta);  
-            
-            _pelaaja1.Animation = new Animation(_pelaajanKuolemaKuva);
-            
-            Keyboard.Disable(Key.A);
-            Keyboard.Disable(Key.W);
-            Keyboard.Disable(Key.S);
-            Keyboard.Disable(Key.D);
-            Keyboard.Disable(Key.Space);
-            Keyboard.Disable(Key.Tab);
+        Label tekstikentta = new Label(200, 100, " GAME OVER! ");
+        tekstikentta.X = tekstikentta.X + 0;
+        tekstikentta.Y = tekstikentta.Y + 300;
+        tekstikentta.Color = Color.Black;
+        tekstikentta.TextColor = Color.Red;
+        tekstikentta.BorderColor = Color.Black;
+        Add(tekstikentta);
+
+        _pelaaja1.Animation = new Animation(_pelaajanKuolemaKuva);
+
+        Keyboard.Disable(Key.A);
+        Keyboard.Disable(Key.W);
+        Keyboard.Disable(Key.S);
+        Keyboard.Disable(Key.D);
+        Keyboard.Disable(Key.Space);
+        Keyboard.Disable(Key.Tab);
     }
 }
